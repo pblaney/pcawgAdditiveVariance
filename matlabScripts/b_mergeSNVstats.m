@@ -1,8 +1,8 @@
 %% merges null and obs SNVstats per chromosome
 
-%% NB can be parallelized across chromosomes
+%% Executed in parallel using available threads
 
-for cChr = 1:22
+parfor cChr = 1:22
     
     input_fname = ['../SNVstats/' cohortName '.obs.chr' num2str(cChr) '.mat'];
     null_fname = ['../SNVstats/' cohortName '.null.chr' num2str(cChr) '.mat'];
@@ -34,7 +34,7 @@ for cChr = 1:22
     cCmp = {snv_ids{N_snv+1:length(snv_ids)}};
     for i = 1:N_snv
         vec = strcmp(snv_ids{i},cCmp);
-        if sum(vec)>0
+        if sum(vec) > 0
             display([num2str(i) '/' num2str(N_snv)]);
             idx = find(vec==1);
             idx1 = i; idx2 = idx + N_snv;
@@ -54,18 +54,25 @@ for cChr = 1:22
     % update stats
     N_snv = length(snv_ids);
     N_samp = length(samp_ids);
-    display(['# snvs: ' num2str(N_snv)]);
-    display(['# samps: ' num2str(N_samp)]);
-    snv_shared = zeros(1,N_snv);
+    fprintf('# snvs: %d\n', N_snv);
+    fprintf('# samps: %d\n', N_samp);
+    snv_shared = zeros(1, N_snv);
     for i = 1:N_samp
         snv_shared(sampXsnv_cell{i}) = snv_shared(sampXsnv_cell{i}) + 1;
     end
-    h_shared = hist(snv_shared,1:max(snv_shared));
-    % display(h_shared);
-    % figure(1); plot(h_shared);
+    h_shared = histcounts(snv_shared, 1:max(snv_shared)+1);
     
-    fname2 = strrep(input_fname,'obs.chr','obs.null.merged.chr');
-    save(fname2,'snv_ids','snv_refs','snv_alts','samp_ids','sampXsnv_cell',...
-        'N_samp','N_snv','snv_shared','h_shared');
-    
+    fname2 = strrep(input_fname, 'obs.chr', 'obs.null.merged.chr');
+    s = struct(...
+        'snv_ids', {snv_ids}, ...
+        'snv_refs', snv_refs, ...
+        'snv_alts', snv_alts, ...
+        'samp_ids', {samp_ids}, ...
+        'sampXsnv_cell', {sampXsnv_cell}, ...
+        'N_samp', N_samp, ...
+        'N_snv', N_snv, ...
+        'snv_shared', snv_shared, ...
+        'h_shared', h_shared ...
+    );
+    save(fname2, "-fromstruct", s);
 end

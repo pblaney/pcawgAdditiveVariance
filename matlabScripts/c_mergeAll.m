@@ -1,7 +1,7 @@
 %% merges all chromosome level SNVstats into one file
 
+%% Executed in parallel using available threads
 fname_all = ['../SNVstats/' cohortName '.obs.null.merged.mat'];
-
 snv_ids_all = cell(0,0);
 snv_refs_all = [];
 snv_alts_all = [];
@@ -10,9 +10,8 @@ sampXsnv_cell_all = cell(0,0);
 N_samp_all = 0;
 N_snv_all = 0;
 
-for cChr = 1:22
-    
-    cChr
+parfor cChr = 1:22
+    fprintf('# chromosome: chr%d\n', num2str(cChr));
     
     fname = strrep(fname_all,'.mat',['.chr' num2str(cChr) '.mat']);
     
@@ -50,15 +49,13 @@ sampXsnv_cell = sampXsnv_cell_all;
 % update stats
 N_snv = length(snv_ids);
 N_samp = length(samp_ids);
-display(['# snvs: ' num2str(N_snv)]);
-display(['# samps: ' num2str(N_samp)]);
-snv_shared = zeros(1,N_snv);
+fprintf('# snvs: %d\n', N_snv);
+fprintf('# samps: %d\n', N_samp);
+snv_shared = zeros(1, N_snv);
 for i = 1:N_samp
     snv_shared(sampXsnv_cell{i}) = snv_shared(sampXsnv_cell{i}) + 1;
 end
-h_shared = hist(snv_shared,1:max(snv_shared));
-% display(h_shared);
-% figure(1); plot(h_shared);
+h_shared = histcounts(snv_shared, 1:max(snv_shared)+1);
 
 save(fname_all,'snv_ids','snv_refs','snv_alts','samp_ids','sampXsnv_cell',...
     'N_samp','N_snv','snv_shared','h_shared');
