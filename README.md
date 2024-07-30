@@ -1,5 +1,5 @@
 # pcawgAdditiveVariance
->Non-coding passengers of Multiple Myeloma
+>Non-coding passengers in Multiple Myeloma
 
 This repository consist of code relevant for additive variance analysis performed on PCAWG mutations.
 
@@ -39,7 +39,7 @@ This workflow consist of two components: Pre-processing and Post-processing
 
 *******************
 
-* Pre-processing step
+### Pre-processing step
 
 1) Create the necessary expected directories
 
@@ -52,53 +52,51 @@ mkdir -p SNVstats
 
 2) Create coding/non-coding driver gene file with the expected columns, but no column names
 
+| mutation | region | gene | cancer_abrv | cancer | chrom | start | end | strand | type |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|mut1 | CDS | KRAS | MM | Multiple-Myeloma | chr12 | 25205246 | 25250929 | - | snv|
-|mut2 | CDS | NRAS | MM | Multiple-Myeloma | chr1 | 114704469 | 114716771 | - | snv|
-|mut3 | CDS | DIS3 | MM | Multiple-Myeloma | chr13 | 72752169 | 72781900 | - | snv|
+| mut1 | CDS | KRAS | MM | Multiple-Myeloma | chr12 | 25205246 | 25250929 | - | snv |
+| mut2 | CDS | NRAS | MM | Multiple-Myeloma | chr1 | 114704469 | 114716771 | - | snv |
+| mut3 | CDS | DIS3 | MM | Multiple-Myeloma | chr13 | 72752169 | 72781900 | - | snv |
 
 
 3) Create summary files for each `cohortName.null.bed` and `cohortName.null.bed` using `generateSummaryInfo.py` script
 
 ```
 # Null
-python generateSummaryInfo.py -d codingAndNoncodingDrivers.txt -I bedFiles/Multiple-Myeloma.null.bed -O summaryFiles/Multiple-Myeloma.null.summary.txt
+python generateSummaryInfo.py \
+  -d codingAndNoncodingDrivers.txt \
+  -I bedFiles/Multiple-Myeloma.null.bed \
+  -O summaryFiles/Multiple-Myeloma.null.summary.txt
 
 # Obs
-python generateSummaryInfo.py -d codingAndNoncodingDrivers.txt -I bedFiles/Multiple-Myeloma.obs.bed -O summaryFiles/Multiple-Myeloma.obs.summary.txt
+python generateSummaryInfo.py \
+  -d codingAndNoncodingDrivers.txt \
+  -I bedFiles/Multiple-Myeloma.obs.bed \
+  -O summaryFiles/Multiple-Myeloma.obs.summary.txt
 ```
 
 *******************
 
-* Post-processing step
+### Post-processing step
 
+1) Ensure proper input files are present
 
+```
+ls bedFiles/
+cohortName.null.bed cohortName.obs.bed
 
+ls summaryFiles/
+cohortName.null.summary.txt cohortName.obs.summary.txt
+```
 
+2) Execute the pipeline
+>Should be launched as a batch job using at least 6 threads 
 
-2) post-processing steps
+```
+./additive_variance.sh
+```
 
-   Pipeline is run by calling additive_variance_demo.m
+### Results
 
-   *******************
-
-   Full pipeline requires the following inputs:
-
-    - in bedFiles folder:
-      cohortName.null.bed
-      cohortName.obs.bed
-
-   - in summaryFiles folder:
-     cohortName.null.summary.txt
-     cohortName.obs.summary.txt
-
-   and generates the output cohortName.txt in the results folder.
-
-  A gcta executable is required (Linux version is included, Windows and Mac versions are available from cnsgenomics.com/software/gcta), which should be placed in the gctaFiles folder.
-
-*******************
-
-Current pipeline is set up to call only final stage, which summarizes the results from precomputed intermediate outputs.
-Outputs are computed from the Breast-AdenoCa cohort with randomized samples used for both null and obs conditions.
 Results text file shows calculated additive variance for each funseq threshold, which is ~0 (1e-6), along with associated p-values (0.5 indicates that no significant genetic variance was found).
 Values of -1 in the results file for funseq thresholds 5 and 6 indicate that insufficient data was found at these thresholds.
