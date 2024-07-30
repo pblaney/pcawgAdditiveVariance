@@ -26,8 +26,6 @@ def readDriverInfo(driverInputFile):
 
     fileName = open(driverInputFile,'r')
     if fileName:
-       for index in range(1,2):
-           fileName.next()
 
        for line in fileName:
            line = line.strip()
@@ -70,8 +68,6 @@ def extractFunSeqScore(funSeqOut,cdsDriverList,ncDriverList):
 
     fileName = open(funSeqOut,'r')
     if fileName:
-       for index in range(1,2):
-           fileName.next()
 
        for line in fileName:
            line = line.strip()
