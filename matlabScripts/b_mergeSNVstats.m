@@ -4,33 +4,45 @@
 
 parfor cChr = 1:22
     
-    input_fname = ['../SNVstats/' cohortName '.obs.chr' num2str(cChr) '.mat'];
+    % Set the observed and null input files per chromosome
+    obs_fname = ['../SNVstats/' cohortName '.obs.chr' num2str(cChr) '.mat'];
     null_fname = ['../SNVstats/' cohortName '.null.chr' num2str(cChr) '.mat'];
     
-    load(null_fname,'snv_ids','snv_refs','snv_alts','samp_ids','sampXsnv_cell',...
-        'N_samp','N_snv');
-    snv_ids2 = snv_ids;
-    snv_refs2 = snv_refs;
-    snv_alts2 = snv_alts;
-    samp_ids2 = samp_ids;
-    sampXsnv_cell2 = sampXsnv_cell;
-    N_samp2 = N_samp;
-    N_snv2 = N_snv;
+    % Read in the observed data
+    obs_data = load(obs_fname,'snv_ids','snv_refs','snv_alts','samp_ids','sampXsnv_cell','N_samp','N_snv');
+    snv_ids = obs_data.snv_ids;
+    snv_refs = obs_data.snv_refs;
+    snv_alts = obs_data.snv_alts;
+    samp_ids = obs_data.samp_ids;
+    sampXsnv_cell = obs_data.sampXsnv_cell;
+    N_samp = null_data.N_samp;
+    N_snv = null_data.N_snv;
+
+    % Read in the null data
+    null_data = load(null_fname,'snv_ids','snv_refs','snv_alts','samp_ids','sampXsnv_cell','N_samp','N_snv');
+    snv_ids2 = null_data.snv_ids;
+    snv_refs2 = null_data.snv_refs;
+    snv_alts2 = null_data.snv_alts;
+    samp_ids2 = null_data.samp_ids;
+    sampXsnv_cell2 = null_data.sampXsnv_cell;
+    N_samp2 = null_data.N_samp;
+    N_snv2 = null_data.N_snv;
     
-    load(input_fname,'snv_ids','snv_refs','snv_alts','samp_ids','sampXsnv_cell',...
-        'N_samp','N_snv');
-    
+    % Merge the observed and null
+    %snv_ids = [snv_ids snv_ids2];
     snv_ids = {snv_ids{1:N_snv} snv_ids2{1:N_snv2}};
     snv_refs = [snv_refs snv_refs2];
     snv_alts = [snv_alts snv_alts2];
+    %samp_ids = [samp_ids, strcat(samp_ids2, '-null')];
     samp_ids = {samp_ids{1:N_samp} samp_ids2{1:N_samp2}};
+    %sampXsnv_cell = [sampXsnv_cell, cellfun(@(x) x + N_snv, sampXsnv_cell2, 'UniformOutput', false)];
     sampXsnv_cell = {sampXsnv_cell{1:N_samp} sampXsnv_cell2{1:N_samp2}};
-    
+
     for i = 1:N_samp2
         samp_ids{N_samp+i} = [samp_ids{N_samp+i} '-null'];
         sampXsnv_cell{N_samp+i} = sampXsnv_cell{N_samp+i} + N_snv;
     end
-    
+
     cCmp = {snv_ids{N_snv+1:length(snv_ids)}};
     for i = 1:N_snv
         vec = strcmp(snv_ids{i},cCmp);
@@ -52,8 +64,8 @@ parfor cChr = 1:22
     end
     
     % update stats
-    N_snv = length(snv_ids);
-    N_samp = length(samp_ids);
+    N_snv = numel(snv_ids);
+    N_samp = numel(samp_ids);
     fprintf('# snvs: %d\n', N_snv);
     fprintf('# samps: %d\n', N_samp);
     snv_shared = zeros(1, N_snv);
@@ -62,7 +74,7 @@ parfor cChr = 1:22
     end
     h_shared = histcounts(snv_shared, 1:max(snv_shared)+1);
     
-    fname2 = strrep(input_fname, 'obs.chr', 'obs.null.merged.chr');
+    fname2 = strrep(obs_fname, 'obs.chr', 'obs.null.merged.chr');
     s = struct(...
         'snv_ids', {snv_ids}, ...
         'snv_refs', snv_refs, ...

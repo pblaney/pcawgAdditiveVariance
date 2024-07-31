@@ -1,12 +1,10 @@
-%%% additive variance demo
+%%% additive variance of passengers in MM
 
 cohortName = 'Multiple-Myeloma';
 
 cd matlabScripts
 
-%%% call matlab pipeline in order
-a_getSNVstats_null
-a_getSNVstats_obs
+%%% call matlab pipeline
 a_makeKeys
 b_mergeSNVstats
 c_mergeAll

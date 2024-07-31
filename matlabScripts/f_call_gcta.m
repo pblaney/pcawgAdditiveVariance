@@ -9,16 +9,16 @@ for cTag = 1:length(tags)
         
         tag = [tags{cTag} '.fsq' num2str(cFsq)];
         
-        cmdStr = ['./gcta64 --threads 6 --dosage-mach ' tag '.dose ' tag '.info ' ...
-            '--imput-rsq 0.3 --maf 0 --make-grm --out ' tag];
+        cmdStr = ['./gcta64 --dosage-mach ' tag '.dose ' tag '.info ' ...
+            '--imput-rsq 0.3 --maf 0 --make-grm --out ' tag ' --thread-num 6'];
         system(cmdStr);
         
-        cmdStr = ['./gcta64 --threads 6 --reml --grm ' tag ' --pheno ' tag '.phen --out ' ...
-            tag ' --prevalence 0.5 --reml-pred-rand'];
+        cmdStr = ['./gcta64 --reml --grm ' tag ' --pheno ' tag '.phen --out ' ...
+            tag ' --prevalence 0.5 --reml-pred-rand --threads 6'];
         system(cmdStr);
         
-        cmdStr = ['./gcta64 --threads 6 --dosage-mach ' tag '.dose ' tag '.info --blup-snp ' tag '.indi.blp --out ' ...
-            tag];
+        cmdStr = ['./gcta64 --dosage-mach ' tag '.dose ' tag '.info --blup-snp ' tag '.indi.blp --out ' ...
+            tag ' --thread-num 6'];
         system(cmdStr);
         
     end

@@ -8,6 +8,13 @@ echo
 # Load modules
 module add matlab/R2023a
 
-# make necessary directories if not made
+# Execute
+matCmd="
 matlab -nodisplay -nosplash -nojvm < additive_variance.m > additive_variance.log
+"
+echo 
+echo "CMD: ${matCmd}"
+eval "${matCmd}"
 
+echo
+echo "D O N E ..."

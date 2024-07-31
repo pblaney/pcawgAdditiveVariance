@@ -44,10 +44,11 @@ This workflow consist of two components: Pre-processing and Post-processing
 1) Create the necessary expected directories
 
 ```
-mkdir -p results
 mkdir -p bedFiles
 mkdir -p summaryFiles
 mkdir -p SNVstats
+mkdir -p results
+mkdir -p keys
 ```
 
 2) Create coding/non-coding driver gene file with the expected columns, but no column names
@@ -91,6 +92,20 @@ cohortName.null.summary.txt cohortName.obs.summary.txt
 
 2) Execute the pipeline
 >Should be launched as a batch job using at least 6 threads 
+
+2.1) Run get_SNVstats for null and observed separately
+>Should be launched as two separate batch jobs to take advantage of parallel execution for both simultaneously
+
+```
+# Null
+./get_SNVstats.sh null
+
+# Obs
+./get_SNVstats.sh obs
+```
+
+2.2) Run the remaining steps of the pipeline
+>Should be launched as a batch job using at least 6 threads
 
 ```
 ./additive_variance.sh
