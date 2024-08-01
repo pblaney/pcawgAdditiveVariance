@@ -1,6 +1,7 @@
 %% calculates keys (coding/driver/funseq infomation) for null and obs SNVs
 %% input from summary files, output to keys folder
 
+disp('Starting ... makeKeys');
 for cIt = 1:2
     
     if cIt==1
