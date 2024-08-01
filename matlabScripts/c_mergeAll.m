@@ -1,6 +1,7 @@
 %% merges all chromosome level SNVstats into one file
 
 %% Executed in parallel using available threads
+disp('Starting ... mergeAll');
 fname_all = ['../SNVstats/' cohortName '.obs.null.merged.mat'];
 snv_ids_all = cell(0,0);
 snv_refs_all = [];

@@ -1,5 +1,6 @@
 %% reads the GCTA outputs, and writes a summary results file in the results folder
 
+disp('Starting ... summarize_results');
 tags = {cohortName};
 nTag = length(tags);
 outFold = '../gctaFiles/';

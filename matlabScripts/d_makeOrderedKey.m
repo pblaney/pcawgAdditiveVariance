@@ -1,6 +1,7 @@
 %% converts null and obs keys into a single key using only common SNVs (with coding/driver/funseq information)
 %% inputs and outputs to keys folder 
 
+disp('Starting ... mergeOrderedKey');
 input_tag = ['../keys/' cohortName];
 
 load([input_tag '.null.key.mat']);

@@ -1,5 +1,6 @@
 %% calls GCTA for all funseq thresholds
 
+disp('Starting ... call_gcta');
 cd('../gctaFiles');
 
 tags = {cohortName};

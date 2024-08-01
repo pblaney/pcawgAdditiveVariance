@@ -2,13 +2,14 @@
 %% input from bedfile, output to SNVstats folder
 
 %% Executed in parallel using available threads
+disp('Starting ... get_SNVstats_obs');
 inFold = '../bedFiles/';
 outFold = '../SNVstats/';
 fname = [cohortName '.obs.bed'];
 
 parfor nChr = 1:22
     cChr = num2str(nChr);
-    fprintf('# chromosome: chr%d\n', cChr);
+    fprintf('# chromosome: chr%d\n', nChr);
     
     snv_ids = cell(0,0);
     snv_refs = [];

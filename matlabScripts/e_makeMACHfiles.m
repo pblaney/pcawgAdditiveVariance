@@ -2,6 +2,7 @@
 %% inputs are from keys and bedfiles folders
 %% additionally, an intermediate file is saved in the machMats folder, containing the genotype matrices saved as a matlab structure
 
+disp('Starting ... makeMACHfiles');
 input_tag = cohortName;
 outFold = '../gctaFiles/';
 
