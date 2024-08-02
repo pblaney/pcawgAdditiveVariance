@@ -16,8 +16,8 @@ parfor cChr = 1:22
     snv_alts = obs_data.snv_alts;
     samp_ids = obs_data.samp_ids;
     sampXsnv_cell = obs_data.sampXsnv_cell;
-    N_samp = null_data.N_samp;
-    N_snv = null_data.N_snv;
+    N_samp = obs_data.N_samp;
+    N_snv = obs_data.N_snv;
 
     % Read in the null data
     null_data = load(null_fname,'snv_ids','snv_refs','snv_alts','samp_ids','sampXsnv_cell','N_samp','N_snv');
@@ -89,3 +89,4 @@ parfor cChr = 1:22
     );
     save(fname2, "-fromstruct", s);
 end
+disp('Completed ... mergeSNVstats');

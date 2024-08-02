@@ -200,3 +200,4 @@ for cFsq = 0:6
     fclose(fid);
 end
 
+disp('Completed ... makeMACHfiles');

@@ -79,3 +79,5 @@ h_shared = histcounts(snv_shared, 1:max(snv_shared)+1);
 
 save(fname_all,'snv_ids','snv_refs','snv_alts','samp_ids','sampXsnv_cell',...
     'N_samp','N_snv','snv_shared','h_shared');
+
+disp('Completed ... mergeAll');

@@ -26,3 +26,5 @@ for cTag = 1:length(tags)
 end
 
 cd('../matlabScripts');
+
+disp('Completed ... call_gcta');

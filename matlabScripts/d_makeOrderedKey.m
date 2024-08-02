@@ -73,3 +73,4 @@ end
 save([input_tag '.orderedKey.mat'],'ordKey_missing','ordKey_snv_ids',...
     'ordKey_cd','ordKey_drv','ordKey_fsq','ordKey_prm','ordKey_input_snvs');
 
+disp('Completed ... mergeOrderedKey');
