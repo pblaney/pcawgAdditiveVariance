@@ -3,7 +3,7 @@
 %% Executed in parallel using available threads
 disp('Starting ... mergeSNVstats');
 parfor cChr = 1:22
-    fprintf('# chromosome: chr%d\n', nChr);
+    fprintf('# chromosome: chr%d\n', cChr);
     
     % Set the observed and null input files per chromosome
     obs_fname = ['../SNVstats/' cohortName '.obs.chr' num2str(cChr) '.mat'];
