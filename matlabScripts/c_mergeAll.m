@@ -2,69 +2,107 @@
 
 %% Executed in parallel using available threads
 disp('Starting ... mergeAll');
+
+% Output filename
 fname_all = ['../SNVstats/' cohortName '.obs.null.merged.mat'];
-snv_ids_all = cell(0,0);
-snv_refs_all = [];
-snv_alts_all = [];
-samp_ids_all = cell(0,0);
-sampXsnv_cell_all = cell(0,0);
-N_samp_all = 0;
-N_snv_all = 0;
+
+% Set variables to hold final merged data
+snv_ids_all = cell(1, 22);
+snv_refs_all = cell(1, 22);
+snv_alts_all = cell(1, 22);
+samp_ids_all = cell(1, 22);
+sampXsnv_cell_all = cell(1, 22);
+N_samp_all = zeros(1, 22);
+N_snv_all = zeros(1, 22);
+
+%snv_ids_all = cell(0,0);
+%snv_refs_all = [];
+%snv_alts_all = [];
+%samp_ids_all = cell(0,0);
+%sampXsnv_cell_all = cell(0,0);
+%N_samp_all = 0;
+%N_snv_all = 0;
 
 parfor cChr = 1:22
     fprintf('# chromosome: chr%d\n', cChr);
     
+    % Per chromosome input filename
     fname = strrep(fname_all,'.mat',['.chr' num2str(cChr) '.mat']);
     
     % Read in the per chromosome data
     chrom_data = load(fname,'snv_ids','snv_refs','snv_alts','samp_ids','sampXsnv_cell','N_samp','N_snv');
-    snv_ids = chrom_data.snv_ids;
-    snv_refs = chrom_data.snv_refs;
-    snv_alts = chrom_data.snv_alts;
-    samp_ids = chrom_data.samp_ids;
-    sampXsnv_cell = chrom_data.sampXsnv_cell;
-    N_samp = chrom_data.N_samp;
-    N_snv = chrom_data.N_snv;
+    snv_ids_all{cChr} = chrom_data.snv_ids;
+    snv_refs_all{cChr} = chrom_data.snv_refs;
+    snv_alts_all{cChr} = chrom_data.snv_alts;
+    samp_ids_all{cChr} = chrom_data.samp_ids;
+    sampXsnv_cell_all{cChr} = chrom_data.sampXsnv_cell;
+    N_samp_all(cChr) = chrom_data.N_samp;
+    N_snv_all(cChr) = chrom_data.N_snv;
+
+    %snv_ids = chrom_data.snv_ids;
+    %snv_refs = chrom_data.snv_refs;
+    %snv_alts = chrom_data.snv_alts;
+    %samp_ids = chrom_data.samp_ids;
+    %sampXsnv_cell = chrom_data.sampXsnv_cell;
+    %N_samp = chrom_data.N_samp;
+    %N_snv = chrom_data.N_snv;
 
     % Create temporary variables to store results
-    temp_snv_ids_all = snv_ids;
-    temp_snv_refs_all = snv_refs;
-    temp_snv_alts_all = snv_alts;
-    temp_samp_ids_all = samp_ids;
-    temp_sampXsnv_cell_all = sampXsnv_cell;
+    %temp_snv_ids_all = snv_ids;
+    %temp_snv_refs_all = snv_refs;
+    %temp_snv_alts_all = snv_alts;
+    %temp_samp_ids_all = samp_ids;
+    %temp_sampXsnv_cell_all = sampXsnv_cell;
 
-    N_snv0 = length(snv_ids_all);
-    N_samp0 = length(samp_ids_all);
-    for i = 1:N_samp
-        temp_sampXsnv_cell_all{i} = temp_sampXsnv_cell_all{i} + N_snv0;
-    end
+    %N_snv0 = length(snv_ids_all);
+    %N_samp0 = length(samp_ids_all);
+    %for i = 1:N_samp
+    %    temp_sampXsnv_cell_all{i} = temp_sampXsnv_cell_all{i} + N_snv0;
+    %end
     
     % Combine data into temporary variables
-    snv_ids_all = [snv_ids_all, temp_snv_ids_all];
-    snv_refs_all = [snv_refs_all, temp_snv_refs_all];
-    snv_alts_all = [snv_alts_all, temp_snv_alts_all];
+    %snv_ids_all = [snv_ids_all, temp_snv_ids_all];
+    %snv_refs_all = [snv_refs_all, temp_snv_refs_all];
+    %snv_alts_all = [snv_alts_all, temp_snv_alts_all];
 
-    if isempty(samp_ids_all)
-        samp_ids_all = temp_samp_ids_all;
-        sampXsnv_cell_all = temp_sampXsnv_cell_all;
-    else
-        for i = 1:data.N_samp
-            idx = find(strcmp(temp_samp_ids_all{i}, samp_ids_all));
-            if isempty(idx)
-                samp_ids_all = [samp_ids_all, temp_samp_ids_all{i}];
-                sampXsnv_cell_all = [sampXsnv_cell_all, temp_sampXsnv_cell_all{i}];
-            else
-                sampXsnv_cell_all{idx} = [sampXsnv_cell_all{idx}, temp_sampXsnv_cell_all{i}];
-            end
-        end
+    %if isempty(samp_ids_all)
+    %    samp_ids_all = temp_samp_ids_all;
+    %    sampXsnv_cell_all = temp_sampXsnv_cell_all;
+    %else
+    %    for i = 1:data.N_samp
+    %        idx = find(strcmp(temp_samp_ids_all{i}, samp_ids_all));
+    %        if isempty(idx)
+    %            samp_ids_all = [samp_ids_all, temp_samp_ids_all{i}];
+    %            sampXsnv_cell_all = [sampXsnv_cell_all, temp_sampXsnv_cell_all{i}];
+    %        else
+    %            sampXsnv_cell_all{idx} = [sampXsnv_cell_all{idx}, temp_sampXsnv_cell_all{i}];
+    %        end
+    %    end
+    %end
+end
+
+% Collapse the data per chromosome into single variable
+snv_ids = [snv_ids_all{:}];
+snv_refs = [snv_refs_all{:}];
+snv_alts = [snv_alts_all{:}];
+samp_ids = unique([samp_ids_all{:}]);
+sampXsnv_cell = cell(1, length(samp_ids));
+
+%snv_ids = snv_ids_all;
+%snv_refs = snv_refs_all;
+%snv_alts = snv_alts_all;
+%samp_ids = samp_ids_all;
+%sampXsnv_cell = sampXsnv_cell_all;
+
+% Need to adjust per chromosome sampXsnv_cell indices 
+N_snv_cumsum = [0, cumsum(N_snv_all)];
+for cChr = 1:22
+    for i = 1:length(samp_ids_all{cChr})
+        samp_idx = find(strcmp(samp_ids_all{cChr}{i}, samp_ids));
+        sampXsnv_cell{samp_idx} = [sampXsnv_cell{samp_idx}, sampXsnv_cell_all{cChr}{i} + N_snv_cumsum(cChr)];
     end
 end
 
-snv_ids = snv_ids_all;
-snv_refs = snv_refs_all;
-snv_alts = snv_alts_all;
-samp_ids = samp_ids_all;
-sampXsnv_cell = sampXsnv_cell_all;
 
 % update stats
 N_snv = length(snv_ids);
