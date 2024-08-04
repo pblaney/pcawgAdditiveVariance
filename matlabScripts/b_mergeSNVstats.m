@@ -2,6 +2,8 @@
 
 %% Executed in parallel using available threads
 disp('Starting ... mergeSNVstats');
+
+p = parpool('Processes', 6, 'IdleTimeout', 1200)
 parfor cChr = 1:22
     fprintf('# chromosome: chr%d\n', cChr);
     
@@ -30,13 +32,10 @@ parfor cChr = 1:22
     N_snv2 = null_data.N_snv;
     
     % Merge the observed and null
-    %snv_ids = [snv_ids snv_ids2];
     snv_ids = {snv_ids{1:N_snv} snv_ids2{1:N_snv2}};
     snv_refs = [snv_refs snv_refs2];
     snv_alts = [snv_alts snv_alts2];
-    %samp_ids = [samp_ids, strcat(samp_ids2, '-null')];
     samp_ids = {samp_ids{1:N_samp} samp_ids2{1:N_samp2}};
-    %sampXsnv_cell = [sampXsnv_cell, cellfun(@(x) x + N_snv, sampXsnv_cell2, 'UniformOutput', false)];
     sampXsnv_cell = {sampXsnv_cell{1:N_samp} sampXsnv_cell2{1:N_samp2}};
 
     for i = 1:N_samp2

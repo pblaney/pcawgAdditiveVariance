@@ -122,7 +122,7 @@ phenVec = phenVec(singSamps==0);
 fname = [machFoldSNV input_tag '.mat'];
 save(fname,'machMatsSNV','machMat0SNV','machMatsSNV_noncd','machMat0SNV_noncd',...
     'machMatsSNV_nonprm','machMat0SNV_nonprm','machMatsSNV_drv','machMat0SNV_drv',...
-    'samp_ids','rej','singSamps','phenVec','snv_chr_all');
+    'samp_ids','rej','singSamps','phenVec','snv_chr_all','-v7.3');
 
 % write out gcta files
 output_tag = [outFold input_tag];

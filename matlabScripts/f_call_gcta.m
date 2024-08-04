@@ -15,7 +15,7 @@ for cTag = 1:length(tags)
         system(cmdStr);
         
         cmdStr = ['./gcta64 --reml --grm ' tag ' --pheno ' tag '.phen --out ' ...
-            tag ' --prevalence 0.5 --reml-pred-rand --threads 6'];
+            tag ' --prevalence 0.5 --reml-pred-rand --thread-num 6'];
         system(cmdStr);
         
         cmdStr = ['./gcta64 --dosage-mach ' tag '.dose ' tag '.info --blup-snp ' tag '.indi.blp --out ' ...

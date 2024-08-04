@@ -15,6 +15,7 @@ sampXsnv_cell_all = cell(1, 22);
 N_samp_all = zeros(1, 22);
 N_snv_all = zeros(1, 22);
 
+p = parpool('Processes', 6, 'IdleTimeout', 1200)
 parfor cChr = 1:22
     fprintf('# chromosome: chr%d\n', cChr);
     
