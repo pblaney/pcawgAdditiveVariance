@@ -88,4 +88,5 @@ parfor cChr = 1:22
     );
     save(fname2, "-fromstruct", s);
 end
+delete(gcp("nocreate"));
 disp('Completed ... mergeSNVstats');
