@@ -49,6 +49,7 @@ mkdir -p summaryFiles
 mkdir -p SNVstats
 mkdir -p results
 mkdir -p keys
+mkdir -p machMats
 ```
 
 2) Create coding/non-coding driver gene file with the expected columns, but no column names
