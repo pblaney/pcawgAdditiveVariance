@@ -3,12 +3,10 @@
 
 This repository consist of code relevant for additive variance analysis performed on PCAWG mutations.
 
-Citation: Kumar S, Warrell J, Li S, McGillivray PD, Meyerson W, Salichos L, Harmanci A, Martinez-Fundichely A, Chan CWY, Nielsen MM, Lochovsky L, Zhang Y, Li X, Lou S, Pedersen JS, Herrmann C, Getz G, Khurana E, Gerstein MB. Passenger Mutations in More Than 2,500 Cancer Genomes: Overall Molecular Functional Impact and Consequences. Cell. 2020 Mar 5;180(5):915-927.e16. doi: 10.1016/j.cell.2020.01.032. Epub 2020 Feb 20. PMID: 32084333; PMCID: PMC7210002.
-
 ## Package Update 
 pcawgAdditiveVariance can now fully accommodate multi-threaded execution.
 
-All original code and documents for the pcawgAdditiveVariance R package were developed
+All original code and documents for the pcawgAdditiveVariance suite of MATLAB scripts were developed
 by [Gerstein Lab](https://github.com/gersteinlab/pcawgAdditiveVariance) and the updates
 outlined in this README were incorporated by [Patrick
 Blaney](https://github.com/pblaney/pcawgAdditiveVariance)
@@ -52,7 +50,7 @@ mkdir -p keys
 mkdir -p machMats
 ```
 
-2) Create coding/non-coding driver gene file with the expected columns, but no column names
+2) Create coding/non-coding driver gene file with the expected columns, but no column names those displayed below are for easy reading
 
 | mutation | region | gene | cancer_abrv | cancer | chrom | start | end | strand | type |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -61,7 +59,7 @@ mkdir -p machMats
 | mut3 | CDS | DIS3 | MM | Multiple-Myeloma | chr13 | 72752169 | 72781900 | - | snv |
 
 
-3) Create summary files for each `cohortName.null.bed` and `cohortName.null.bed` using `generateSummaryInfo.py` script
+3) Create summary files for each `cohortName.null.bed` and `cohortName.null.bed` using `generateSummaryInfo.py` script. It is critical to ensure the names of samples within the two `.bed` files match, this is not checked for internally and will cause error in GCTA step
 
 ```
 # Null
@@ -116,3 +114,6 @@ cohortName.null.summary.txt cohortName.obs.summary.txt
 
 Results text file shows calculated additive variance for each funseq threshold, which is ~0 (1e-6), along with associated p-values (0.5 indicates that no significant genetic variance was found).
 Values of -1 in the results file for funseq thresholds 5 and 6 indicate that insufficient data was found at these thresholds.
+
+### Citation
+>Kumar S, Warrell J, Li S, McGillivray PD, Meyerson W, Salichos L, Harmanci A, Martinez-Fundichely A, Chan CWY, Nielsen MM, Lochovsky L, Zhang Y, Li X, Lou S, Pedersen JS, Herrmann C, Getz G, Khurana E, Gerstein MB. Passenger Mutations in More Than 2,500 Cancer Genomes: Overall Molecular Functional Impact and Consequences. Cell. 2020 Mar 5;180(5):915-927.e16. doi: 10.1016/j.cell.2020.01.032. Epub 2020 Feb 20. PMID: 32084333; PMCID: PMC7210002.
