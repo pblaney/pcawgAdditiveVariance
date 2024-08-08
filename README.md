@@ -1,7 +1,5 @@
 # pcawgAdditiveVariance
->Non-coding passengers in Multiple Myeloma
-
-This repository consist of code relevant for additive variance analysis performed on PCAWG mutations.
+>Extension of PCAWG additive variance analysis of non-coding passengers to Multiple Myeloma genomes
 
 ## Package Update 
 pcawgAdditiveVariance can now fully accommodate multi-threaded execution.
@@ -19,11 +17,11 @@ Following dependencies are required to run this workflow.
 
 This is only required for the creating of `-I <funSeqOutFile>` input data of the `generateSummaryInfo.py` script, see Pre-processing step
 
-* Python
+* Python (Successful with v3.9.13)
 
 This is required to execute the `generateSummaryInfo.py` script, specifically the library `docopt`, see Pre-processing step
 
-* Matlab
+* MATLAB (Successful with R2023)
 
 **Required**, must have this for execution of additive variance model
 
@@ -42,15 +40,10 @@ This workflow consist of two components: Pre-processing and Post-processing
 1) Create the necessary expected directories
 
 ```
-mkdir -p bedFiles
-mkdir -p summaryFiles
-mkdir -p SNVstats
-mkdir -p results
-mkdir -p keys
-mkdir -p machMats
+mkdir -p bedFiles summaryFiles SNVstats results keys machMats
 ```
 
-2) Create coding/non-coding driver gene file with the expected columns, but no column names those displayed below are for easy reading
+2) Create coding/non-coding driver gene file, the `generateSummaryInfo.py` script expects the format displayed below, however final driver gene file should not have a header
 
 | mutation | region | gene | cancer_abrv | cancer | chrom | start | end | strand | type |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -61,14 +54,16 @@ mkdir -p machMats
 
 3) Create summary files for each `cohortName.null.bed` and `cohortName.null.bed` using `generateSummaryInfo.py` script. It is critical to ensure the names of samples within the two `.bed` files match, this is not checked for internally and will cause error in GCTA step
 
+For the **null** dataset summary file
 ```
-# Null
 python generateSummaryInfo.py \
   -d codingAndNoncodingDrivers.txt \
   -I bedFiles/Multiple-Myeloma.null.bed \
   -O summaryFiles/Multiple-Myeloma.null.summary.txt
+```
 
-# Obs
+For the **obs** dataset summary file
+```
 python generateSummaryInfo.py \
   -d codingAndNoncodingDrivers.txt \
   -I bedFiles/Multiple-Myeloma.obs.bed \
@@ -81,34 +76,65 @@ python generateSummaryInfo.py \
 
 1) Ensure proper input files are present
 
+The FunSeq2 BED files
 ```
 ls bedFiles/
-cohortName.null.bed cohortName.obs.bed
+```
+>Example: Multiple-Myeloma.null.bed Multiple-Myeloma.obs.bed
 
+The null and obs summary files
+```
 ls summaryFiles/
-cohortName.null.summary.txt cohortName.obs.summary.txt
 ```
+>Example: Multiple-Myeloma.null.summary.txt Multiple-Myeloma.obs.summary.txt
 
-2) Execute the pipeline
->Should be launched as a batch job using at least 6 threads 
+2) Execute the pipeline as set of multi-threaded batch jobs
 
-2.1) Run get_SNVstats for null and observed separately
->Should be launched as two separate batch jobs to take advantage of parallel execution for both simultaneously
-
+Run get_SNVstats for null and observed separately, roughly ~2hr per set
+For **null**
 ```
-# Null
 ./get_SNVstats.sh null
+```
 
-# Obs
+<details>
+<summary>SLURM Example</summary>
+<br>
+
+```
+sbatch --job-name=getSNVstats --time=4:00:00 --mem=24G --cpus-per-task=6 --wrap="./get_SNVstats.sh null"
+```
+
+</details>
+
+For **obs**
+```
 ./get_SNVstats.sh obs
 ```
 
-2.2) Run the remaining steps of the pipeline
->Should be launched as a batch job using at least 6 threads
+<details>
+<summary>SLURM Example</summary>
+<br>
 
+```
+sbatch --job-name=getSNVstats --time=4:00:00 --mem=24G --cpus-per-task=6 --wrap="./get_SNVstats.sh obs"
+```
+
+</details>
+
+Run the remaining steps of the pipeline, may take up to 24hrs
 ```
 ./additive_variance.sh
 ```
+
+<details>
+<summary>SLURM Example</summary>
+<br>
+
+```
+sbatch --job-name=addVar --time=36:00:00 --mem=36G --cpus-per-task=6--wrap="./additive_variance.sh"
+```
+
+</details>
 
 ### Results
 

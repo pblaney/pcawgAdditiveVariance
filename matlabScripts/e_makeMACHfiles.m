@@ -130,7 +130,7 @@ cMachMats = machMatsSNV;
 cMachMat0 = machMat0SNV + machMatsSNV(:,:,1);
 
 % Parallel execution of creating .dose / .info / .phen GCTA files
-parfor cFsq = 0:4
+parfor cFsq = 0:6
     if cFsq==0
         cMat = cMachMat0;
     else

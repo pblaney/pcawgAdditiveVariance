@@ -19,7 +19,7 @@ for cTag = tagList
     display([input_tag ':']);
     display(' ');
     
-    for fsqThres = [0:4]
+    for fsqThres = [0:6]
         
         tag = [input_tag '.fsq' num2str(fsqThres)];
         
@@ -69,7 +69,7 @@ for cTag = tagList
     resFile = ['../results/' input_tag '.txt'];
     fid = fopen(resFile,'w');
     fprintf(fid,'fsq_thres\tadditive_var\tp-val\n');
-    for fsqThres = [0:4]
+    for fsqThres = [0:6]
         fprintf(fid,[num2str(fsqThres) '\t']);
         fprintf(fid,[num2str(addvars(fsqThres+1)) '\t']);
         fprintf(fid,[num2str(pvals(fsqThres+1)) '\n']);

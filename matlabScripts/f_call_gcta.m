@@ -6,7 +6,7 @@ cd('../gctaFiles');
 tags = {cohortName};
 
 for cTag = 1:length(tags)
-    for cFsq = 0:4
+    for cFsq = 0:6
         
         tag = [tags{cTag} '.fsq' num2str(cFsq)];
         
