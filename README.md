@@ -101,7 +101,12 @@ For **null**
 <br>
 
 ```
-sbatch --job-name=getSNVstats --time=4:00:00 --mem=24G --cpus-per-task=6 --wrap="./get_SNVstats.sh null"
+sbatch \
+  --job-name=getSNVstats \
+  --time=4:00:00 \
+  --mem=24G \
+  --cpus-per-task=6 \
+  --wrap="./get_SNVstats.sh null"
 ```
 
 </details>
@@ -116,7 +121,12 @@ For **obs**
 <br>
 
 ```
-sbatch --job-name=getSNVstats --time=4:00:00 --mem=24G --cpus-per-task=6 --wrap="./get_SNVstats.sh obs"
+sbatch \
+  --job-name=getSNVstats \
+  --time=4:00:00 \
+  --mem=24G \
+  --cpus-per-task=6 \
+  --wrap="./get_SNVstats.sh obs"
 ```
 
 </details>
@@ -131,7 +141,12 @@ Run the remaining steps of the pipeline, may take up to 24hrs
 <br>
 
 ```
-sbatch --job-name=addVar --time=36:00:00 --mem=36G --cpus-per-task=6--wrap="./additive_variance.sh"
+sbatch \
+  --job-name=addVar \
+  --time=36:00:00 \
+  --mem=36G \
+  --cpus-per-task=6 \
+  --wrap="./additive_variance.sh"
 ```
 
 </details>
