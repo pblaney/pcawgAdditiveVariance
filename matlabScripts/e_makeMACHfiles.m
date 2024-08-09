@@ -31,7 +31,10 @@ machMatsSNV_nonprm = zeros(nSamp,nSNV,6);
 machMat0SNV_nonprm = zeros(nSamp,nSNV);
 machMatsSNV_drv = zeros(nSamp,nSNV,6);
 machMat0SNV_drv = zeros(nSamp,nSNV);
+snv_id_all = strings(1,nSNV);
 snv_chr_all = zeros(1,nSNV);
+ref_string_all = strings(1,nSNV);
+alt_string_all = strings(1,nSNV);
 rej = 0;
 
 for cSNV = 1:nSNV
@@ -59,6 +62,11 @@ for cSNV = 1:nSNV
     if snv_chr < 1
         snv_chr = 23;
     end
+
+    % Add a variable to hold important info for the .info file
+    ref_string_all(cSNV)  = snv_refs(cIdx);
+    alt_string_all(cSNV)  = snv_alts(cIdx);
+    snv_id_all(cSNV) = [snv_ids{cIdx} ':' snv_refs(cIdx) ':' snv_alts(cIdx)];
     snv_chr_all(cSNV) = snv_chr;
     
     snv_cd = ordKey_cd(cSNV);
@@ -122,15 +130,15 @@ phenVec = phenVec(singSamps==0);
 fname = [machFoldSNV input_tag '.mat'];
 save(fname,'machMatsSNV','machMat0SNV','machMatsSNV_noncd','machMat0SNV_noncd',...
     'machMatsSNV_nonprm','machMat0SNV_nonprm','machMatsSNV_drv','machMat0SNV_drv',...
-    'samp_ids','rej','singSamps','phenVec','snv_chr_all','-v7.3');
+    'samp_ids','rej','singSamps','phenVec','snv_chr_all',...
+    'snv_id_all','ref_string_all','alt_string_all','-v7.3');
 
 % write out gcta files
 output_tag = [outFold input_tag];
 cMachMats = machMatsSNV;
 cMachMat0 = machMat0SNV + machMatsSNV(:,:,1);
 
-% Parallel execution of creating .dose / .info / .phen GCTA files
-%parfor cFsq = 0:6
+% Creating .dose / .info / .phen GCTA files per FunSeq2 score threshold
 for cFsq = 0:6
     if cFsq==0
         cMat = cMachMat0;
@@ -138,7 +146,7 @@ for cFsq = 0:6
         cMat = cMachMats(:,:,cFsq);
     end
 
-    %fprintf('# FunSeq score threshold: %d\n', cFsq);
+    fprintf('# FunSeq score threshold: %d\n', cFsq);
     cMat = cMat(singSamps==0,:);
     cBinMat = (cMat>0);
     colTots = sum(cBinMat,1);
@@ -147,50 +155,68 @@ for cFsq = 0:6
     nGene = size(cMat,2);
     N_samp = size(cMat,1);
     
-    fid = fopen([output_tag '.fsq' num2str(cFsq) '.dose'],'w');
+    % Dose file
+    fprintf('# Generating fsq%d.dose file\n', cFsq);
+    dose_fid = fopen([output_tag '.fsq' num2str(cFsq) '.dose'],'w');
+    %fid = fopen([output_tag '.fsq' num2str(cFsq) '.dose'],'w');
     for i = 1:N_samp
         display([num2str(i) '/' num2str(N_samp)]);
         
-        nn = num2str(i);
-        
-        ln = ['samp' nn ' ALLELE_DOSE'];
-        
+        % Improve the connection between GCTA files using proper sample IDs
+        % old
+        %nn = num2str(i);
+        %ln = ['samp' nn ' ALLELE_DOSE'];
+        % new
+        ln = [samp_ids{i} ' ALLELE_DOSE'];
+
         for j = 1:nGene
             str = [num2str(cMat(i,j),'%.4f')];
             ln = [ln ' ' str];
         end
         ln = [ln ' ' sprintf('\n')];
         
-        fprintf(fid,ln);
+        fprintf(dose_fid,ln);
     end
-    fclose(fid);
+    fclose(dose_fid);
     
-    fid = fopen([output_tag '.fsq' num2str(cFsq) '.info'],'w');
-    ln = ['SNP' sprintf('\t') 'Al1' sprintf('\t') 'Al2' sprintf('\t') ...
-        'Freq1' sprintf('\t') 'MAF' sprintf('\t') 'Quality' sprintf('\t') ...
-        'Rsq' sprintf('\n')];
-    fprintf(fid,ln);
+    % Info file
+    fprintf('# Generating fsq%d.info file\n', cFsq);
+    info_fid = fopen([output_tag '.fsq' num2str(cFsq) '.info'],'w');
+    info_maf = 0.5;
+    info_freq = 0.5;
+    %fid = fopen([output_tag '.fsq' num2str(cFsq) '.info'],'w');
+    %ln = ['SNP' sprintf('\t') 'Al1' sprintf('\t') 'Al2' sprintf('\t') ...
+    %      'Freq1' sprintf('\t') 'MAF' sprintf('\t') 'Quality' sprintf('\t') ...
+    %      'Rsq' sprintf('\n')];
+    fprintf(info_fid,'SNP\tAl1\tAl2\tFreq1\tMAF\tQuality\tRsq\n');
+    %fprintf(info_fid,ln);
     for i = 1:nGene
         display([num2str(i) '/' num2str(nGene)]);
         
-        gen_id = ['snp' num2str(i)];
-        maf = 0.5;
-        freq = 0.5;
-        ln = [gen_id sprintf('\t') 'A' sprintf('\t') ...
-            'T' sprintf('\t') num2str(freq,'%.4f') sprintf('\t') ...
-            num2str(maf,'%.4f') sprintf('\t') '1.0000' sprintf('\t') '1.0000'...
-            sprintf('\n')];
-        fprintf(fid,ln);
+        %gen_id = ['snp' num2str(i)];
+        gen_id = snv_id_all{i};
+        %maf = 0.5;
+        %freq = 0.5;
+        al1 = ref_string_all{i};
+        al2 = alt_string_all{i};
+        ln = [gen_id sprintf('\t') al2 sprintf('\t') ...
+              al2 sprintf('\t') num2str(info_freq,'%.4f') sprintf('\t') ...
+              num2str(info_maf,'%.4f') sprintf('\t') '1.0000' sprintf('\t') '1.0000'...
+              sprintf('\n')];
+        fprintf(info_fid,ln);
     end
-    fclose(fid);
+    fclose(info_fid);
     
-    fid = fopen([output_tag '.fsq' num2str(cFsq) '.phen'],'w');
+    % Phenotype file
+    fprintf('# Generating fsq%d.phen file\n', cFsq);
+    phen_fid = fopen([output_tag '.fsq' num2str(cFsq) '.phen'],'w');
+    %fid = fopen([output_tag '.fsq' num2str(cFsq) '.phen'],'w');
     nonSings = find(singSamps==0);
     for i = 1:N_samp
         display([num2str(i) '/' num2str(N_samp)]);
         
-        ln = ['samp' num2str(i) sprintf('\t')];
-        ln = [ln 'samp' num2str(i) sprintf('\t')];
+        ln = [samp_ids{i} sprintf('\t')];
+        ln = [ln samp_ids{i} sprintf('\t')];
         ii = nonSings(i);
         if isempty(strfind(samp_ids{ii},'null'))
             ln = [ln '1'];
@@ -199,9 +225,9 @@ for cFsq = 0:6
         end
         ln = [ln sprintf('\n')];
         
-        fprintf(fid,ln);
+        fprintf(phen_fid,ln);
     end
-    fclose(fid);
+    fclose(phen_fid);
 
     % Enhance the performance by writing the completed loop to the file instead of per line
     % Dose file
