@@ -31,6 +31,9 @@ machMatsSNV_nonprm = zeros(nSamp,nSNV,6);
 machMat0SNV_nonprm = zeros(nSamp,nSNV);
 machMatsSNV_drv = zeros(nSamp,nSNV,6);
 machMat0SNV_drv = zeros(nSamp,nSNV);
+machMatsSNV_id = {};
+machMatsSNV_ref = {};
+machMatsSNV_alt = {};
 snv_id_all = strings(1,nSNV);
 snv_chr_all = zeros(1,nSNV);
 ref_string_all = strings(1,nSNV);
@@ -63,12 +66,7 @@ for cSNV = 1:nSNV
         snv_chr = 23;
     end
 
-    % Add a variable to hold important info for the .info file
-    ref_string_all(cSNV)  = snv_refs(cIdx);
-    alt_string_all(cSNV)  = snv_alts(cIdx);
-    snv_id_all(cSNV) = [snv_ids{cIdx} ':' snv_refs(cIdx) ':' snv_alts(cIdx)];
     snv_chr_all(cSNV) = snv_chr;
-    
     snv_cd = ordKey_cd(cSNV);
     snv_drv = ordKey_drv(cSNV);
     snv_prm = ordKey_prm(cSNV);
@@ -80,6 +78,11 @@ for cSNV = 1:nSNV
             machMatsSNV_drv(sampIdxs,cSNV,1:lim) = 1;
         else
             machMatsSNV(sampIdxs,cSNV,1:lim) = 1;
+
+            % Add a variable to hold important info for the .info file
+            machMatsSNV_id{lim+1}{cSNV} = [snv_ids{cIdx} ':' snv_refs(cIdx) ':' snv_alts(cIdx)];
+            machMatsSNV_ref{lim+1}{cSNV} = snv_refs(cIdx);
+            machMatsSNV_alt{lim+1}{cSNV} = snv_alts(cIdx);
             if snv_cd==1
                 machMatsSNV_noncd(sampIdxs,cSNV,1:lim) = 1;
                 if snv_prm==0
@@ -92,6 +95,11 @@ for cSNV = 1:nSNV
             machMat0SNV_drv(sampIdxs,cSNV) = 1;
         else
             machMat0SNV(sampIdxs,cSNV) = 1;
+            
+            % Add a variable to hold important info for the .info file
+            machMatsSNV_id{lim+1}{cSNV} = [snv_ids{cIdx} ':' snv_refs(cIdx) ':' snv_alts(cIdx)];
+            machMatsSNV_ref{lim+1}{cSNV} = snv_refs(cIdx);
+            machMatsSNV_alt{lim+1}{cSNV} = snv_alts(cIdx);
             if snv_cd==1
                 machMat0SNV_noncd(sampIdxs,cSNV) = 1;
                 if snv_prm==0
@@ -158,15 +166,10 @@ for cFsq = 0:6
     % Dose file
     fprintf('# Generating fsq%d.dose file\n', cFsq);
     dose_fid = fopen([output_tag '.fsq' num2str(cFsq) '.dose'],'w');
-    %fid = fopen([output_tag '.fsq' num2str(cFsq) '.dose'],'w');
     for i = 1:N_samp
         display([num2str(i) '/' num2str(N_samp)]);
         
         % Improve the connection between GCTA files using proper sample IDs
-        % old
-        %nn = num2str(i);
-        %ln = ['samp' nn ' ALLELE_DOSE'];
-        % new
         ln = [samp_ids{i} ' ALLELE_DOSE'];
 
         for j = 1:nGene
@@ -184,22 +187,14 @@ for cFsq = 0:6
     info_fid = fopen([output_tag '.fsq' num2str(cFsq) '.info'],'w');
     info_maf = 0.5;
     info_freq = 0.5;
-    %fid = fopen([output_tag '.fsq' num2str(cFsq) '.info'],'w');
-    %ln = ['SNP' sprintf('\t') 'Al1' sprintf('\t') 'Al2' sprintf('\t') ...
-    %      'Freq1' sprintf('\t') 'MAF' sprintf('\t') 'Quality' sprintf('\t') ...
-    %      'Rsq' sprintf('\n')];
     fprintf(info_fid,'SNP\tAl1\tAl2\tFreq1\tMAF\tQuality\tRsq\n');
-    %fprintf(info_fid,ln);
     for i = 1:nGene
         display([num2str(i) '/' num2str(nGene)]);
         
-        %gen_id = ['snp' num2str(i)];
-        gen_id = snv_id_all{i};
-        %maf = 0.5;
-        %freq = 0.5;
-        al1 = ref_string_all{i};
-        al2 = alt_string_all{i};
-        ln = [gen_id sprintf('\t') al2 sprintf('\t') ...
+        gen_id = machMatsSNV_id{cFsq+1}{i};
+        al1 = machMatsSNV_ref{cFsq+1}{i};
+        al2 = machMatsSNV_alt{cFsq+1}{i};
+        ln = [gen_id sprintf('\t') al1 sprintf('\t') ...
               al2 sprintf('\t') num2str(info_freq,'%.4f') sprintf('\t') ...
               num2str(info_maf,'%.4f') sprintf('\t') '1.0000' sprintf('\t') '1.0000'...
               sprintf('\n')];
@@ -210,7 +205,6 @@ for cFsq = 0:6
     % Phenotype file
     fprintf('# Generating fsq%d.phen file\n', cFsq);
     phen_fid = fopen([output_tag '.fsq' num2str(cFsq) '.phen'],'w');
-    %fid = fopen([output_tag '.fsq' num2str(cFsq) '.phen'],'w');
     nonSings = find(singSamps==0);
     for i = 1:N_samp
         display([num2str(i) '/' num2str(N_samp)]);
