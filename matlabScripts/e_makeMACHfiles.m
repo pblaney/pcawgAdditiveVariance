@@ -74,15 +74,15 @@ for cSNV = 1:nSNV
     lim = floor(snv_fsq);
     
     if lim>0
+        % Add a variable to hold important info for the .info file
+        machMatsSNV_id{lim+1}{cSNV} = [snv_ids{cIdx} ':' snv_refs(cIdx) ':' snv_alts(cIdx)];
+        machMatsSNV_ref{lim+1}{cSNV} = snv_refs(cIdx);
+        machMatsSNV_alt{lim+1}{cSNV} = snv_alts(cIdx);
+
         if snv_drv==1
             machMatsSNV_drv(sampIdxs,cSNV,1:lim) = 1;
         else
             machMatsSNV(sampIdxs,cSNV,1:lim) = 1;
-
-            % Add a variable to hold important info for the .info file
-            machMatsSNV_id{lim+1}{cSNV} = [snv_ids{cIdx} ':' snv_refs(cIdx) ':' snv_alts(cIdx)];
-            machMatsSNV_ref{lim+1}{cSNV} = snv_refs(cIdx);
-            machMatsSNV_alt{lim+1}{cSNV} = snv_alts(cIdx);
             if snv_cd==1
                 machMatsSNV_noncd(sampIdxs,cSNV,1:lim) = 1;
                 if snv_prm==0
@@ -91,15 +91,14 @@ for cSNV = 1:nSNV
             end
         end
     else
+        % Add a variable to hold important info for the .info file
+        machMatsSNV_id{lim+1}{cSNV} = [snv_ids{cIdx} ':' snv_refs(cIdx) ':' snv_alts(cIdx)];
+        machMatsSNV_ref{lim+1}{cSNV} = snv_refs(cIdx);
+        machMatsSNV_alt{lim+1}{cSNV} = snv_alts(cIdx);
         if snv_drv==1
             machMat0SNV_drv(sampIdxs,cSNV) = 1;
         else
             machMat0SNV(sampIdxs,cSNV) = 1;
-            
-            % Add a variable to hold important info for the .info file
-            machMatsSNV_id{lim+1}{cSNV} = [snv_ids{cIdx} ':' snv_refs(cIdx) ':' snv_alts(cIdx)];
-            machMatsSNV_ref{lim+1}{cSNV} = snv_refs(cIdx);
-            machMatsSNV_alt{lim+1}{cSNV} = snv_alts(cIdx);
             if snv_cd==1
                 machMat0SNV_noncd(sampIdxs,cSNV) = 1;
                 if snv_prm==0
