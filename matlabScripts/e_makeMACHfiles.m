@@ -34,10 +34,6 @@ machMat0SNV_drv = zeros(nSamp,nSNV);
 machMatsSNV_id = {};
 machMatsSNV_ref = {};
 machMatsSNV_alt = {};
-snv_id_all = strings(1,nSNV);
-snv_chr_all = zeros(1,nSNV);
-ref_string_all = strings(1,nSNV);
-alt_string_all = strings(1,nSNV);
 rej = 0;
 
 for cSNV = 1:nSNV
@@ -67,6 +63,9 @@ for cSNV = 1:nSNV
     end
 
     snv_chr_all(cSNV) = snv_chr;
+    snv_id = [ordKey_snv_ids{cSNV} ':' ordKey_snv_ref(cSNV) ':' ordKey_snv_alt(cSNV)];
+    snv_ref = ordKey_snv_ref(cSNV);
+    snv_alt = ordKey_snv_alt(cSNV);
     snv_cd = ordKey_cd(cSNV);
     snv_drv = ordKey_drv(cSNV);
     snv_prm = ordKey_prm(cSNV);
@@ -75,9 +74,9 @@ for cSNV = 1:nSNV
     
     if lim>0
         % Add a variable to hold important info for the .info file
-        machMatsSNV_id{lim+1}{cSNV} = [snv_ids{cIdx} ':' snv_refs(cIdx) ':' snv_alts(cIdx)];
-        machMatsSNV_ref{lim+1}{cSNV} = snv_refs(cIdx);
-        machMatsSNV_alt{lim+1}{cSNV} = snv_alts(cIdx);
+        machMatsSNV_id{lim+1}{cSNV} = snv_id;
+        machMatsSNV_ref{lim+1}{cSNV} = snv_ref;
+        machMatsSNV_alt{lim+1}{cSNV} = snv_alt;
 
         if snv_drv==1
             machMatsSNV_drv(sampIdxs,cSNV,1:lim) = 1;
@@ -92,9 +91,9 @@ for cSNV = 1:nSNV
         end
     else
         % Add a variable to hold important info for the .info file
-        machMatsSNV_id{lim+1}{cSNV} = [snv_ids{cIdx} ':' snv_refs(cIdx) ':' snv_alts(cIdx)];
-        machMatsSNV_ref{lim+1}{cSNV} = snv_refs(cIdx);
-        machMatsSNV_alt{lim+1}{cSNV} = snv_alts(cIdx);
+        machMatsSNV_id{lim+1}{cSNV} = snv_id;
+        machMatsSNV_ref{lim+1}{cSNV} = snv_ref;
+        machMatsSNV_alt{lim+1}{cSNV} = snv_alt;
         if snv_drv==1
             machMat0SNV_drv(sampIdxs,cSNV) = 1;
         else
@@ -137,8 +136,8 @@ phenVec = phenVec(singSamps==0);
 fname = [machFoldSNV input_tag '.mat'];
 save(fname,'machMatsSNV','machMat0SNV','machMatsSNV_noncd','machMat0SNV_noncd',...
     'machMatsSNV_nonprm','machMat0SNV_nonprm','machMatsSNV_drv','machMat0SNV_drv',...
-    'samp_ids','rej','singSamps','phenVec','snv_chr_all',...
-    'machMatsSNV_id','machMatsSNV_ref','machMatsSNV_alt','-v7.3');
+    'samp_ids','rej','singSamps','phenVec','snv_chr_all','-v7.3');
+save([machFoldSNV 'testing.mat'],'machMatsSNV_id','machMatsSNV_ref','machMatsSNV_alt')
 
 % write out gcta files
 output_tag = [outFold input_tag];
