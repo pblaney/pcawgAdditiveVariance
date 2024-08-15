@@ -43,8 +43,8 @@ for i = 1:N_snv
     end
     
     snv_id = snv_ids{i};
-    snv_ref = snv_refs{i};
-    snv_alt = snv_alts{i};
+    snv_ref = snv_refs(i);
+    snv_alt = snv_alts(i);
     
     if ordKey_input_snvs(count)==1
         idx = find(strcmp(snv_id,snv_ids_key),1);
