@@ -42,18 +42,18 @@ for i = 1:N_snv
         end
     end
     
-    snv_id = snv_ids{i};
-    snv_ref = snv_refs(i);
-    snv_alt = snv_alts(i);
+    %snv_id = snv_ids{i};
+    %snv_ref = snv_refs(i);
+    %snv_alt = snv_alts(i);
     
     if ordKey_input_snvs(count)==1
         idx = find(strcmp(snv_id,snv_ids_key),1);
         if isempty(idx)
             ordKey_missing(count) = 1;
         else
-            ordKey_snv_ids{count} = snv_id;
-            ordKey_snv_ref(count) = snv_ref;
-            ordKey_snv_alt(count) = snv_alt;
+            ordKey_snv_ids{count} = snv_ids{idx};
+            ordKey_snv_ref(count) = snv_refs(idx);
+            ordKey_snv_alt(count) = snv_alts(idx);
             ordKey_cd(count) = snv_cd_key(idx);
             ordKey_drv(count) = snv_drv_key(idx);
             ordKey_fsq(count) = snv_fsq_key(idx);
@@ -64,9 +64,9 @@ for i = 1:N_snv
         if isempty(idx)
             ordKey_missing(count) = 1;
         else
-            ordKey_snv_ids{count} = snv_id;
-            ordKey_snv_ref(count) = snv_ref;
-            ordKey_snv_alt(count) = snv_alt;
+            ordKey_snv_ids{count} = snv_ids{idx};
+            ordKey_snv_ref(count) = snv_refs(idx);
+            ordKey_snv_alt(count) = snv_alts(idx);
             ordKey_cd(count) = snv_cd_key_rand(idx);
             ordKey_drv(count) = snv_drv_key_rand(idx);
             ordKey_fsq(count) = snv_fsq_key_rand(idx);
