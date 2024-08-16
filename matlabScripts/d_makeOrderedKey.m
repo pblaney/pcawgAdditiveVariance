@@ -42,7 +42,7 @@ for i = 1:N_snv
         end
     end
     
-    %snv_id = snv_ids{i};
+    snv_id = snv_ids{i};
     %snv_ref = snv_refs(i);
     %snv_alt = snv_alts(i);
     
@@ -51,7 +51,7 @@ for i = 1:N_snv
         if isempty(idx)
             ordKey_missing(count) = 1;
         else
-            ordKey_snv_ids{count} = snv_ids{idx};
+            ordKey_snv_ids{count} = snv_id;
             ordKey_snv_ref(count) = snv_refs(idx);
             ordKey_snv_alt(count) = snv_alts(idx);
             ordKey_cd(count) = snv_cd_key(idx);
@@ -64,7 +64,7 @@ for i = 1:N_snv
         if isempty(idx)
             ordKey_missing(count) = 1;
         else
-            ordKey_snv_ids{count} = snv_ids{idx};
+            ordKey_snv_ids{count} = snv_id;
             ordKey_snv_ref(count) = snv_refs(idx);
             ordKey_snv_alt(count) = snv_alts(idx);
             ordKey_cd(count) = snv_cd_key_rand(idx);
